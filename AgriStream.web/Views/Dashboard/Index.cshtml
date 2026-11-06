@@ -1,0 +1,84 @@
+﻿@model List<AgriStream.web.Models.TelemetryReading>
+
+@{
+    ViewData["Title"] = "Field Dashboard";
+}
+
+<div class="mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h1 class="text-success">Field Dashboard</h1>
+            <p class="text-muted">
+                Latest simulated sensor readings retrieved through Azure Functions.
+            </p>
+        </div>
+
+        <a asp-action="Index" class="btn btn-outline-success">
+            Refresh readings
+        </a>
+    </div>
+
+    @if (TempData["Success"] is string message)
+    {
+        <div class="alert alert-success" role="status">
+            @message
+        </div>
+    }
+
+    @if (Model.Count == 0)
+    {
+        <div class="alert alert-info">
+            No sensor readings are available yet.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var reading in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h2 class="h5">@reading.FieldName</h2>
+                            <p class="text-muted">@reading.DeviceId</p>
+
+                            <dl>
+                                <dt>Soil moisture</dt>
+                                <dd>@reading.SoilMoisture.ToString("F1")%</dd>
+
+                                <dt>Temperature</dt>
+                                <dd>@reading.Temperature.ToString("F1") °C</dd>
+
+                                <dt>Humidity</dt>
+                                <dd>@reading.Humidity.ToString("F1")%</dd>
+
+                                <dt>Recorded at (UTC)</dt>
+                                <dd>
+                                    @reading.RecordedAt.UtcDateTime.ToString(
+                                        "yyyy-MM-dd HH:mm:ss")
+                                </dd>
+                            </dl>
+
+                            @if (User.IsInRole("Farmer") ||
+                                 User.IsInRole("Admin"))
+                            {
+                                <form asp-controller="Dashboard"
+                                      asp-action="Irrigate"
+                                      method="post">
+                                    <input type="hidden"
+                                           name="deviceId"
+                                           value="@reading.DeviceId" />
+
+                                    <button type="submit"
+                                            class="btn btn-success">
+                                        Trigger Irrigation
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

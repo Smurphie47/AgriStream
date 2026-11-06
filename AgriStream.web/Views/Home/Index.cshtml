@@ -1,0 +1,277 @@
+﻿@{
+    ViewData["Title"] = "Farm Management";
+    var signedIn = User.Identity?.IsAuthenticated == true;
+}
+
+<style>
+    .home-hero {
+        padding: 48px;
+        border-radius: 24px;
+        background: #12382b;
+        color: #fff;
+        margin-bottom: 28px;
+    }
+
+    .hero-label {
+        display: inline-block;
+        padding: 7px 12px;
+        border: 1px solid #507260;
+        border-radius: 30px;
+        color: #c7ebd1;
+        font-size: .8rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 22px;
+    }
+
+    .home-hero h1 {
+        color: #fff;
+        font-size: clamp(2.2rem, 5vw, 3.7rem);
+        line-height: 1.08;
+        max-width: 700px;
+        margin-bottom: 22px;
+    }
+
+    .home-hero p {
+        color: #d0e1d5;
+        max-width: 620px;
+        font-size: 1.1rem;
+        line-height: 1.7;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 28px;
+    }
+
+        .hero-actions .btn {
+            padding: 12px 22px;
+        }
+
+        .hero-actions .btn-light {
+            color: #12382b;
+        }
+
+    .home-section-title {
+        font-size: 1.5rem;
+        margin-bottom: 7px;
+    }
+
+    .home-section-description {
+        color: #6b7d70;
+        margin-bottom: 24px;
+    }
+
+    .feature-card {
+        height: 100%;
+        padding: 28px;
+        border: 1px solid #dce8df;
+        border-radius: 16px;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .feature-number {
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: #eaf5ed;
+        color: #176b46;
+        font-weight: 800;
+        margin-bottom: 20px;
+    }
+
+    .feature-card h3 {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+    }
+
+    .feature-card p {
+        color: #6b7d70;
+        line-height: 1.7;
+        flex-grow: 1;
+    }
+
+    .feature-card a {
+        color: #176b46;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .feature-card a:hover {
+            text-decoration: underline;
+        }
+
+    .home-note {
+        padding: 20px 24px;
+        margin-top: 28px;
+        border: 1px solid #dce8df;
+        border-radius: 14px;
+        background: #eaf5ed;
+        color: #365742;
+    }
+
+    @@media (max-width: 575.98px) {
+        .home-hero {
+            padding: 30px 24px;
+        }
+    }
+</style>
+
+<section class="home-hero" aria-labelledby="heroTitle">
+    <span class="hero-label">AGRISTREAM IoT</span>
+
+    <h1 id="heroTitle">
+        Your fields.<br />
+        One connected view.
+    </h1>
+
+    <p>
+        View the latest sensor readings, submit irrigation commands
+        and upload farm imagery from one management platform.
+    </p>
+
+    <div class="hero-actions">
+        @if (signedIn)
+        {
+            <a class="btn btn-light"
+               asp-controller="Dashboard"
+               asp-action="Index">
+                Open dashboard &rarr;
+            </a>
+
+            <a class="btn btn-outline-light"
+               asp-controller="Drone"
+               asp-action="Upload">
+                Upload an image
+            </a>
+        }
+        else
+        {
+            <a class="btn btn-light"
+               asp-controller="Account"
+               asp-action="Login">
+                Sign in to your farm &rarr;
+            </a>
+        }
+    </div>
+</section>
+
+<section aria-labelledby="toolsTitle">
+    <h2 id="toolsTitle" class="home-section-title">
+        Farm management tools
+    </h2>
+
+    <p class="home-section-description">
+        From field readings to farm imagery, keep your information together.
+    </p>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <article class="feature-card">
+                <div class="feature-number" aria-hidden="true">01</div>
+
+                <h3>Field dashboard</h3>
+
+                <p>
+                    Review soil moisture, temperature and humidity
+                    across your fields. Submit irrigation commands
+                    using your authorised account.
+                </p>
+
+                @if (signedIn)
+                {
+                    <a asp-controller="Dashboard"
+                       asp-action="Index">
+                        View dashboard &rarr;
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Account"
+                       asp-action="Login">
+                        Sign in to view &rarr;
+                    </a>
+                }
+            </article>
+        </div>
+
+        <div class="col-md-4">
+            <article class="feature-card">
+                <div class="feature-number" aria-hidden="true">02</div>
+
+                <h3>Farm imagery</h3>
+
+                <p>
+                    Upload JPG or PNG images to cloud storage.
+                    Each upload is recorded through an
+                    asynchronous processing audit.
+                </p>
+
+                @if (signedIn)
+                {
+                    <a asp-controller="Drone"
+                       asp-action="Upload">
+                        Upload an image &rarr;
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Account"
+                       asp-action="Login">
+                        Sign in to upload &rarr;
+                    </a>
+                }
+            </article>
+        </div>
+
+        <div class="col-md-4">
+            <article class="feature-card">
+                <div class="feature-number" aria-hidden="true">03</div>
+
+                <h3>Sensor telemetry</h3>
+
+                <p>
+                    Explore the latest field readings.
+                    Administrators and agronomists can also
+                    generate sample readings for demonstration.
+                </p>
+
+                @if (signedIn &&
+                     (User.IsInRole("Admin") ||
+                      User.IsInRole("Agronomist")))
+                {
+                    <a asp-controller="Telemetry"
+                       asp-action="Index">
+                        Open telemetry &rarr;
+                    </a>
+                }
+                else if (signedIn)
+                {
+                    <a asp-controller="Dashboard"
+                       asp-action="Index">
+                        View field readings &rarr;
+                    </a>
+                }
+                else
+                {
+                    <a asp-controller="Account"
+                       asp-action="Login">
+                        Sign in to explore &rarr;
+                    </a>
+                }
+            </article>
+        </div>
+    </div>
+</section>
+
+<div class="home-note">
+    <strong>Demonstration environment:</strong>
+    Sensor readings are simulated. Irrigation commands update
+    recorded device status and do not operate physical equipment.
+</div>

@@ -1,0 +1,385 @@
+﻿@{
+    var currentController =
+        ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+
+    var currentAction =
+        ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+    var signedIn = User.Identity?.IsAuthenticated == true;
+
+    var role = User.FindFirst(
+        System.Security.Claims.ClaimTypes.Role)?.Value;
+
+    string Active(string controller, string? action = null)
+    {
+        return currentController.Equals(
+                   controller, StringComparison.OrdinalIgnoreCase)
+               && (action == null || currentAction.Equals(
+                   action, StringComparison.OrdinalIgnoreCase))
+            ? "active"
+            : "";
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - AgriStream</title>
+
+    <script type="importmap"></script>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/AgriStream.web.styles.css"
+          asp-append-version="true" />
+
+    <style>
+            :root {
+                --agri-green: #176b46;
+                --agri-dark: #12382b;
+                --agri-light: #eaf5ed;
+                --agri-border: #dce8df;
+            }
+
+            html {
+                min-height: 100%;
+            }
+
+            body {
+                min-height: 100vh;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                background: #f4f7f4;
+                color: #233b30;
+                font-family: "Segoe UI", Arial, sans-serif;
+            }
+
+            .agri-navbar {
+                background: #fff;
+                border-bottom: 1px solid var(--agri-border);
+                box-shadow: 0 4px 20px rgba(18, 56, 43, .04);
+                padding: 15px 0;
+            }
+
+            .agri-navbar .navbar-brand {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                color: var(--agri-dark);
+                font-size: 1.45rem;
+                font-weight: 800;
+                letter-spacing: -.7px;
+            }
+
+            .brand-mark {
+                display: grid;
+                place-items: center;
+                width: 38px;
+                height: 38px;
+                border-radius: 12px;
+                background: var(--agri-green);
+                color: white;
+                font-size: 1.25rem;
+                font-weight: 800;
+            }
+
+            .agri-navbar .nav-link {
+                padding: 9px 14px !important;
+                border-radius: 9px;
+                color: #52675a;
+                font-weight: 600;
+                font-size: .94rem;
+            }
+
+            .agri-navbar .nav-link:hover,
+            .agri-navbar .nav-link.active {
+                background: var(--agri-light);
+                color: var(--agri-green);
+            }
+
+            .agri-account {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .account-name {
+                display: block;
+                font-size: .9rem;
+                font-weight: 700;
+                line-height: 1.3;
+            }
+
+            .account-role {
+                display: block;
+                color: #718175;
+                font-size: .75rem;
+            }
+
+            .agri-main {
+                flex: 1;
+                width: 100%;
+                padding-top: 34px;
+                padding-bottom: 44px;
+            }
+
+            .agri-main h1,
+            .agri-main h2,
+            .agri-main h3 {
+                color: var(--agri-dark);
+                font-weight: 750;
+                letter-spacing: -.6px;
+            }
+
+            .agri-main .card {
+                border: 1px solid var(--agri-border);
+                border-radius: 16px;
+                box-shadow: 0 7px 24px rgba(18, 56, 43, .04);
+                overflow: hidden;
+            }
+
+            .agri-main .card-header {
+                padding: 15px 20px;
+                background: #f0f7f1;
+                border-bottom: 1px solid var(--agri-border);
+                color: var(--agri-dark);
+                font-weight: 700;
+            }
+
+            .agri-main .card-body {
+                padding: 24px;
+            }
+
+            .btn {
+                border-radius: 9px;
+                font-weight: 600;
+            }
+
+            .btn-primary,
+            .btn-success {
+                background-color: var(--agri-green);
+                border-color: var(--agri-green);
+            }
+
+            .btn-primary:hover,
+            .btn-success:hover {
+                background-color: #105436;
+                border-color: #105436;
+            }
+
+            .btn-outline-primary,
+            .btn-outline-success {
+                color: var(--agri-green);
+                border-color: var(--agri-green);
+            }
+
+            .btn-outline-primary:hover,
+            .btn-outline-success:hover {
+                background: var(--agri-green);
+                border-color: var(--agri-green);
+                color: #fff;
+            }
+
+            .form-control,
+            .form-select {
+                border-color: #d6e2d9;
+                border-radius: 9px;
+                min-height: 44px;
+            }
+
+            .form-control:focus,
+            .form-select:focus {
+                border-color: var(--agri-green);
+                box-shadow: 0 0 0 .2rem rgba(23, 107, 70, .12);
+            }
+
+            .alert {
+                border-radius: 12px;
+            }
+
+            .table {
+                --bs-table-bg: #fff;
+                --bs-table-border-color: var(--agri-border);
+                vertical-align: middle;
+            }
+
+            .table thead th {
+                background: var(--agri-light);
+                color: var(--agri-dark);
+                padding: 14px;
+                white-space: nowrap;
+            }
+
+            .table td {
+                padding: 14px;
+            }
+
+            .agri-footer {
+                padding: 22px 0;
+                background: #fff;
+                border-top: 1px solid var(--agri-border);
+                color: #718175;
+                font-size: .85rem;
+            }
+
+            .footer-content {
+                display: flex;
+                justify-content: space-between;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            @@media (max-width: 991.98px) {
+                .agri-navbar .navbar-collapse {
+                    padding-top: 16px;
+                }
+
+                .agri-account {
+                    margin-top: 14px;
+                    padding-top: 14px;
+                    border-top: 1px solid var(--agri-border);
+                }
+
+                .agri-main {
+                    padding-top: 24px;
+                }
+            }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light agri-navbar">
+            <div class="container">
+                <a class="navbar-brand"
+                   asp-area=""
+                   asp-controller="Home"
+                   asp-action="Index">
+                    <span class="brand-mark" aria-hidden="true">A</span>
+                    AgriStream
+                </a>
+
+                <button class="navbar-toggler"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#agriNavigation"
+                        aria-controls="agriNavigation"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse"
+                     id="agriNavigation">
+
+                    <ul class="navbar-nav mx-lg-auto gap-1">
+                        <li class="nav-item">
+                            <a class="nav-link @Active("Home", "Index")"
+                               asp-area=""
+                               asp-controller="Home"
+                               asp-action="Index">
+                                Home
+                            </a>
+                        </li>
+
+                        @if (signedIn)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link @Active("Dashboard")"
+                                   asp-area=""
+                                   asp-controller="Dashboard"
+                                   asp-action="Index">
+                                    Dashboard
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link @Active("Drone", "Upload")"
+                                   asp-area=""
+                                   asp-controller="Drone"
+                                   asp-action="Upload">
+                                    Upload Image
+                                </a>
+                            </li>
+
+                            @if (User.IsInRole("Admin")
+                                 || User.IsInRole("Agronomist"))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link @Active("Telemetry")"
+                                       asp-area=""
+                                       asp-controller="Telemetry"
+                                       asp-action="Index">
+                                        Telemetry
+                                    </a>
+                                </li>
+                            }
+                        }
+                    </ul>
+
+                    <div class="agri-account">
+                        @if (signedIn)
+                        {
+                            <div>
+                                <span class="account-name">
+                                    @User.Identity?.Name
+                                </span>
+                                <span class="account-role">@role</span>
+                            </div>
+
+                            <form asp-area=""
+                                  asp-controller="Account"
+                                  asp-action="Logout"
+                                  method="post"
+                                  class="m-0">
+                                <button type="submit"
+                                        class="btn btn-outline-secondary btn-sm">
+                                    Logout
+                                </button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a class="btn btn-success"
+                               asp-area=""
+                               asp-controller="Account"
+                               asp-action="Login">
+                                Sign in
+                            </a>
+                        }
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main role="main" class="container agri-main">
+        @RenderBody()
+    </main>
+
+    <footer class="agri-footer">
+        <div class="container footer-content">
+            <span>&copy; @DateTime.UtcNow.Year AgriStream IoT</span>
+            <span>Smarter monitoring. Better farming.</span>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
